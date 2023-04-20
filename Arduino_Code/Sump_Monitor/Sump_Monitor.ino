@@ -22,6 +22,8 @@ bool SILENCED = false;
 bool WARNING_DRY = true;
 bool WATCH_DRY = true;
 
+bool ALARM_ENABLED = false;
+
 LiquidCrystal_I2C lcd(0x27,16,2); //Setup LCD over Wire comms, uses default address 0x27
 
 //Used for the interrupt, attachInterrupt requires a func
@@ -81,6 +83,12 @@ void updateHub(){
     //0 if all is well, 1 for watch wet, 2 for warning wet, 3 for both.
     if(!WATCH_DRY) status_report += 1;
     if(!WARNING_DRY) status_report +=2;
+
+    //Use 128 for all is well instead of 0 so that blips don't update the hub.
+    if(status_report == 0){
+      status_report = 128;
+    }
+
     Serial.println(status_report);    
   } 
   if(hub_request == 1){
@@ -98,7 +106,7 @@ void loop() {
   WARNING_DRY = (digitalRead(WARNING_SENSOR)== HIGH);
   int curr_stamp = millis();
   //play alarm sound every other quarter second if alarm is played.
-  if(ALARM & !SILENCED){
+  if(ALARM & ALARM_ENABLED & !SILENCED){
       if(alarm_toggle){
         tone(SPKR_PIN, 500, polling_freq*0.85);
         alarm_toggle = 0;

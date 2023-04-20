@@ -130,7 +130,7 @@ void updateDisplayOne(){
 
 //This function will handle serial comms to the sump monitor
 void updateFromSensorOne(){
-  int status_code = 0; // 0 is no alerts, 1 is watch, 2 is warning, 3 is both.
+  int status_code = 0; // 128 is no alerts, 1 is watch, 2 is warning, 3 is both.
   int request_type = 0; //0 is the request type to just get an update, request 1 silences
   if(SILENCED){
     request_type = 1;
@@ -139,6 +139,11 @@ void updateFromSensorOne(){
   if(Serial2.available()){
     status_code = Serial2.parseInt(SKIP_WHITESPACE); //I'm only sending individual lines with numbers back. 
     //Serial.println(status_code);
+    
+    //This is just a comms blip, do not update to being good.
+    if(status_code == 0){
+      return;
+    }
     
     if(status_code & 1){
       SENSOR_ONE_WATCH = true;
