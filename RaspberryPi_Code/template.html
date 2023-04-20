@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+	<title>Home Monitoring System</title>
+	<style>
+.green {
+	color: green;
+        font-weight: bold;
+}
+.yellow {
+	color: yellow;
+	font-weight: bold;
+}
+.red {
+	color: red;
+	font-weight: bold;
+}
+body {
+	background-color: grey;
+}
+table, th, td {
+	border: 1px solid;
+}
+table {
+	width: 65%;
+}
+
+
+	</style>
+</head>
+<body>
+	<table>
+		<tr><th>Sensor Module</th><th>Status Message</th>
+		</tr>
+		<tr><td>SumpMonitor</td>
+		{% if sensors[0] == 3 %}
+		<td class="red">WARNING</td>
+		{% elif sensors[0] == 2 %}
+		<td class="red">WARNING</td>
+                {% elif sensors[0] == 1 %}
+	        <td class="yellow">WATCH</td>
+                {% else %}
+                <td class="green">OK</td>
+		{% endif %}
+		</tr>
+		<tr><td>Last Update from Hub</td><td>{{debug}}</td></tr>
+	</table>
+</body>
+</html>
