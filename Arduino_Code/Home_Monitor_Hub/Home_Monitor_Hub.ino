@@ -167,17 +167,16 @@ void updateFromSensorTwo(){
 
 void updateWebController(){
   int controller_request = 0;
-  int status_report = 0; // 1 = watch wet, 2 = warning wet, 4 = power out
+  int status_report = 0; // 1 = watch wet, 2 = warning wet, 
   if(Serial.available()){
     Serial.readStringUntil('\n'); //only passing basic ints around, this should work
     //Since the message is kind of irrelevant and is always a status update, we just
     //discard it for now.
-    //0 if all is well, 1 for watch wet, 2 for warning wet, 3 for both.
+    //128 if all is well, 1 for watch wet, 2 for warning wet, 3 for both.
     if(SENSOR_ONE_WATCH) status_report += 1;
     if(SENSOR_ONE_WARNING) status_report +=2;
-    if(SENSOR_TWO_OUTAGE) status_report +=4;
     char message[10] = "";
-    sprintf(message, "%d,%d", status_report, 5); // add the power monitor status here when ready
+    sprintf(message, "%d,%d", status_report, millis()); // Updated hub to act as power monitor, send uptime to the controller.
     Serial.println(message);    
   } 
 }
