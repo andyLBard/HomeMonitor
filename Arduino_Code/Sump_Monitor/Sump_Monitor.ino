@@ -22,12 +22,18 @@ bool SILENCED = false;
 bool WARNING_DRY = true;
 bool WATCH_DRY = true;
 
-bool ALARM_ENABLED = false;
+bool ALARM_ENABLED = true;
 
 LiquidCrystal_I2C lcd(0x27,16,2); //Setup LCD over Wire comms, uses default address 0x27
 
 //Used for the interrupt, attachInterrupt requires a func
 void silence_alarm(){
+  //try to fix the bounce in this signal.
+  //WORKING AREA!
+  //delay(50);
+  //if(digitalRead(SILENCE_BTN_PIN) == HIGH){
+  //  return;    
+  //}
   SILENCED = true;
 }
 
@@ -38,8 +44,8 @@ void setup() {
   pinMode(WARNING_SENSOR, INPUT_PULLUP);
   lcd.init();
   lcd.backlight();
-  //silence alarm if button is pressed because it's in pullup, we bind to rising
-  attachInterrupt(digitalPinToInterrupt(SILENCE_BTN_PIN), silence_alarm, RISING);
+  //silence alarm if button is pressed because it's in pullup, we bind to FALLing
+  attachInterrupt(digitalPinToInterrupt(SILENCE_BTN_PIN), silence_alarm, FALLING);
   SILENCED = false;
   Serial.begin(9600);
 }
@@ -108,7 +114,7 @@ void loop() {
   //play alarm sound every other quarter second if alarm is played.
   if(ALARM & ALARM_ENABLED & !SILENCED){
       if(alarm_toggle){
-        tone(SPKR_PIN, 500, polling_freq*0.85);
+        digitalWrite(SPKR_PIN, HIGH);
         alarm_toggle = 0;
       } else {
         alarm_toggle = 1;
@@ -122,6 +128,6 @@ void loop() {
   update_output();
   updateHub();
   check_alarm();
-  //noTone(SPKR_PIN);
+  digitalWrite(SPKR_PIN, LOW);
   prev_stamp = curr_stamp;
 }
