@@ -15,6 +15,7 @@ bool SENSOR_ONE_WATCH = false;
 bool SENSOR_ONE_WARNING = false;
 bool SENSOR_TWO_OUTAGE = false;
 
+const int BTN_PIN = 21;
 const int EMERGENCY_LIGHT = 27;
 
 //lcd is the i2c connection, and it's the one that duplicates the
@@ -55,7 +56,7 @@ void setup() {
   analogWrite(A1, 1); //set contrast here;
   
   //Use an interrupt to handle when we need to silence.
-  attachInterrupt(digitalPinToInterrupt(21), silence_alarm, RISING);
+  attachInterrupt(digitalPinToInterrupt(BTN_PIN), silence_alarm, FALLING);
 
   lcd.init();
   lcd.backlight();
